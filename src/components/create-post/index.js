@@ -12,7 +12,7 @@ import { connect } from "react-redux";
 import createPost from '../../store/action/create-post-action';
 import { bindActionCreators } from "redux";
  
-class CreatePost extends React.Component {
+class CreatePost extends React.PureComponent {
     constructor(props) {
         super(props)
  
@@ -34,6 +34,12 @@ class CreatePost extends React.Component {
             })
         }
     }
+
+    handleChange = e => {
+        this.setState({ docTitle: e.target.value });
+    };
+
+    // File upload event
  
     docUpload = e => {
         const reader = new FileReader()
@@ -61,7 +67,7 @@ class CreatePost extends React.Component {
     }
  
     render() {
-        const { preview, upload} = this.state
+        const { preview, upload, docTitle} = this.state
  
         return (
             <div className="file-upload mt-5">
@@ -69,19 +75,19 @@ class CreatePost extends React.Component {
                     <div className="card">
                         <div className="card-header"><h4>{this.state.title}</h4></div>
                         <div className="card-body">
-                            <div>
-                            {upload ? 
-                                <div>
+                            <div className="card-content">
+                            {upload ?
+                                <div className="upload-file">
                                     {preview ?
-                                    <div>
+                                    <div className="preview">
                                         <label>Document title</label>
-                                        <input type="text" ref={(title) => this.title = title} defaultValue={this.state.docTitle} className="form-control doc-title"></input>
+                                        <input type="text" ref={(title) => this.title = title} defaultValue={this.state.docTitle} className="form-control doc-title" onChange={this.handleChange} />
                                         <embed className='preview-file mt-4' src={`${preview}`} alt={'preview'} type="application/pdf" />
                                     </div>
                                     : ''}
                                 </div>
                             : 
-                                <div>
+                                <div className="choose-file">
                                     <span className="btn btn-outline-primary btn-file" >
                                         Choose file <input type="file" onChange={this.docUpload}/>
                                     </span>
@@ -91,7 +97,7 @@ class CreatePost extends React.Component {
                         </div>
                         <div className="card-footer">
                             <button type="button" className="btn btn-outline-secondary mr-2" disabled={!preview} onClick={this.back}>Back</button>
-                            <button type="button" disabled={!preview} onClick={this.submit} className="btn btn-primary">Post</button>
+                            <button type="button" disabled={!(preview && docTitle)} onClick={this.submit} className="btn btn-primary">Post</button>
                         </div>
                     </div>
                 </div>

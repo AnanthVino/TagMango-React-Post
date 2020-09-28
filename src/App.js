@@ -17,7 +17,6 @@ const App = () => {
             <Route path="/post" component={PostView} />
             <Route path="/create-post/:id" component={CreatePost} />
           </Switch>
-          {/* <Footer /> */}
         </Router>
     </div>
   );

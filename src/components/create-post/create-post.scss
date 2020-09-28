@@ -2,6 +2,7 @@
     .preview-file {
         width: 100%;
         height: 100vh;
+        position: relative;
     }
 
     .card-header {
@@ -11,6 +12,11 @@
 
     .card-body {
         text-align: left;
+    }
+
+    label:after {
+        content:"*";
+        color:red;
     }
     
     .card-footer {

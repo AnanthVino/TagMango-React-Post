@@ -10,7 +10,7 @@ import React from 'react';
 import './view-post.scss';
 import { connect } from "react-redux";
 
-class PostView extends React.Component {
+class PostView extends React.PureComponent {
     constructor(props) {
         super(props)
 

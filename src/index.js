@@ -7,6 +7,7 @@ import { Provider } from "react-redux";
 import { createStore } from 'redux';
 import setReducer from './store/reducer/create-post-reducer';
 
+//React peristed state function
 const saveToLocalStorage = (state) => {
   try {
     const serializedState = JSON.stringify(state);

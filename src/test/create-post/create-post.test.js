@@ -20,7 +20,7 @@ const mockStore = configureMockStore();
 const data = { createPost: {}};
 
 const initialState = {
-    data: data,
+    data: data
 };
 
 describe('Create post', () => {
