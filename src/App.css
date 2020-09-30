@@ -36,3 +36,84 @@
     transform: rotate(360deg);
   }
 }
+
+h5 {
+  text-align: left;
+  margin-left: 40px;
+}
+
+/* For pdf page */
+
+.react-pdf__Page {
+  margin-top: 10px;
+}
+.react-pdf__Page__textContent {
+  border: 1px solid darkgrey;
+  box-shadow: 5px 5px 5px 1px #ccc;
+  border-radius: 5px;
+  width: 100%!important;
+  height: 100%!important;
+}
+
+.react-pdf__Page__annotations.annotationLayer {
+  padding: 20px;
+}
+
+.react-pdf__Page__canvas {
+  margin: 0 auto;
+  width: 100%!important;
+  height: 100%!important;
+}
+
+.all-page-container {
+  height: 100%;
+  max-height: 500px;
+  overflow: auto;
+}
+
+.react-pdf__Document {
+  position: relative;
+  top: 0;
+  right: 0;
+}
+
+.pdf-page {
+  position: absolute;
+  background: #FF7F50;
+  width: 100%;
+  height: 60px;
+  top: 0;
+  z-index: 9999;
+  display: none;
+}
+
+.react-pdf__Document:hover .pdf-page {
+  display: block;
+}
+
+.total-page {
+  float: left;
+  padding: 20px;
+  color: #fff;
+}
+.delete-file {
+  float: right;
+  padding: 20px;
+  color: #fff;
+}
+
+.previous-page {
+  position: absolute;
+  color: #FF7F50;
+   top: 50%;
+   left: 3%;
+   z-index: 9999;
+}
+
+.next-page {
+  position: absolute;
+  color: #FF7F50;
+  top: 50%;
+  right: 3%;
+  z-index: 9999;
+}

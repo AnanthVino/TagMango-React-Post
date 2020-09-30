@@ -18,7 +18,7 @@ const Home = (props) => {
     return (
         <div className="home">
             <div className="container">
-                <h2>Welcome to Tag Mango</h2>
+                <h2>Welcome to TagMango</h2>
                 <button type="submit" className="btn btn-primary mt-1" onClick={() => onRedirect()}>Create post</button>
             </div>
         </div>

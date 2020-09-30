@@ -9,6 +9,7 @@
 import React from 'react';
 import './view-post.scss';
 import { connect } from "react-redux";
+import { Document, Page } from "react-pdf";
 
 class PostView extends React.PureComponent {
     constructor(props) {
@@ -19,7 +20,9 @@ class PostView extends React.PureComponent {
             docTitle: this.props.post.title || '',
             showComment: false,
             comments: [],
-            active: false
+            active: false,
+            numPages: null,
+            pageNumber: 1
         }
     }
 
@@ -43,24 +46,40 @@ class PostView extends React.PureComponent {
 	}
   
     close = () => {
-    this.setState({
-       active: false
-    });
-  }
+        this.setState({
+            active: false
+        });
+    }
 
-  onEditPost = () => {
-    this.props.history.push({
-        pathname: `/create-post/${this.props.post.id}`,
-        state: {
-            id: this.props.post.id,
-            title: this.props.post.title,
-            file: this.props.post.file
-        }
-    });
-  }
+    onEditPost = () => {
+        this.props.history.push({
+            pathname: `/create-post/${this.props.post.id}`,
+            state: {
+                id: this.props.post.id,
+                title: this.props.post.title,
+                file: this.props.post.file
+            }
+        });
+    }
+
+    onDocumentLoadSuccess = ({ numPages }) => {
+        this.setState({numPages: numPages, pageNumber: 1})
+    }
+
+    changePage = (offset) => {
+        this.setState((prevPageNumber) => ({ pageNumber:  prevPageNumber.pageNumber + offset}))
+    }
+
+    previousPage = () => {
+        this.changePage(-1);
+    }
+
+    nextPage = () => {
+        this.changePage(1);
+    }
 
     render() {
-        const { preview, showComment, comments} = this.state;
+        const { preview, showComment, comments, numPages, pageNumber } = this.state;
         const menuItems = [
 			{
 				label: 'Edit',
@@ -75,28 +94,25 @@ class PostView extends React.PureComponent {
                     <div className="card-header d-flex flex-row">
                         <div className="p-2"><img src={require("../../assets/img/img_avatar.png")} alt="Avatar" className="user-icon" /></div>
                         <div className="p-2"><h5>{this.state.docTitle}</h5></div>
-                        <div className="edit-post" tabIndex="0" onBlur={this.close}>
-				            <div className={`toggle ${active ? 'active' : ''}`} onClick={this.toggle}>
-					            <span>
-						            <i className="fa fa-ellipsis-h" />
-					            </span>
-				            </div>
-				            <div className={`menu ${active ? 'expanded' : 'collapsed'}`}>
-					            <ul className="mt-3">
-						            {menuItems.map((i,index) => (
-                                    <li key={index} onClick={this.onEditPost}>
-								        <span>
-									        <i className={`${i.icon} edit-icon`} />
-								        </span>
-								        <span className="label ml-2">{i.label}</span>
-                                    </li>
-                                    ))}
-					            </ul>
-				            </div>
-			            </div>
                     </div>
                     <div className="card-body">       
-                        <embed className='preview-file mt-4' src={`${preview}`} alt={'preview'} type="application/pdf" />
+                        <Document
+                            file={preview}
+                            options={{ workerSrc: 'pdf.worker.js' }}
+                            onLoadSuccess={this.onDocumentLoadSuccess}
+                        >
+                            <div className="pdf-page">
+                                <div className="total-page">{`${numPages} Pages`}</div>
+                            </div>
+
+                            {pageNumber > 1 &&
+                                <i className="fa fa-arrow-circle-left fa-3x previous-page" onClick={this.previousPage} aria-hidden="true"></i>
+                            }
+                            {pageNumber < numPages &&
+                                <i className="fa fa-arrow-circle-right fa-3x next-page" onClick={this.nextPage} aria-hidden="true"></i>
+                            }
+                            <Page pageNumber={pageNumber} />
+                        </Document>
                     </div>
                     <div className="card-footer">
                         <div className="d-flex flex-row">

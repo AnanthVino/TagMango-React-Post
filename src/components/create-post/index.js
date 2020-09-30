@@ -11,6 +11,7 @@ import './create-post.scss';
 import { connect } from "react-redux";
 import createPost from '../../store/action/create-post-action';
 import { bindActionCreators } from "redux";
+import { Document, Page } from "react-pdf";
  
 class CreatePost extends React.PureComponent {
     constructor(props) {
@@ -20,7 +21,9 @@ class CreatePost extends React.PureComponent {
             title: 'Create post',
             docTitle: '',
             preview: '',
-            upload: false
+            upload: false,
+            numPages: null,
+            pageNumber: 1
         }
     }
  
@@ -30,7 +33,9 @@ class CreatePost extends React.PureComponent {
                 upload: true, 
                 title: "Update post",
                 preview: this.props.data.file,
-                docTitle: this.props.data.title
+                docTitle: this.props.data.title,
+                numPages: null,
+                pageNumber: 1
             })
         }
     }
@@ -47,6 +52,22 @@ class CreatePost extends React.PureComponent {
         reader.onloadend = () => {
             this.setState({ preview: reader.result, upload: true })
         }
+    }
+
+    onDocumentLoadSuccess = ({ numPages }) => {
+        this.setState({numPages: numPages, pageNumber: 1})
+    }
+    
+    changePage = (offset) => {
+        this.setState((prevPageNumber) => ({ pageNumber:  prevPageNumber.pageNumber + offset}))
+    }
+    
+    previousPage = () => {
+        this.changePage(-1);
+    }
+    
+    nextPage = () => {
+        this.changePage(1);
     }
  
     back = () => {
@@ -65,9 +86,13 @@ class CreatePost extends React.PureComponent {
             this.props.history.push("/post");
         },100)
     }
+
+    removeFile = () => {
+        this.setState({preview: '', upload: false})
+    }
  
     render() {
-        const { preview, upload, docTitle} = this.state
+        const { preview, upload, docTitle, numPages, pageNumber} = this.state
  
         return (
             <div className="file-upload mt-5">
@@ -82,7 +107,25 @@ class CreatePost extends React.PureComponent {
                                     <div className="preview">
                                         <label>Document title</label>
                                         <input type="text" ref={(title) => this.title = title} defaultValue={this.state.docTitle} className="form-control doc-title" onChange={this.handleChange} />
-                                        <embed className='preview-file mt-4' src={`${preview}`} alt={'preview'} type="application/pdf" />
+                                        <Document
+                                            file={preview}
+                                            options={{ workerSrc: 'pdf.worker.js' }}
+                                            onLoadSuccess={this.onDocumentLoadSuccess}
+                                        >
+                                            <div className="pdf-page">
+                                                <div className="total-page">{`${numPages} Pages`}</div>
+                                                <div className="delete-file"><i className="fa fa-times-circle fa-lg" onClick={this.removeFile} aria-hidden="true"></i></div>
+                                            </div>
+
+                                            {pageNumber > 1 &&
+                                                <i className="fa fa-arrow-circle-left fa-3x previous-page" onClick={this.previousPage} aria-hidden="true"></i>
+                                            
+                                            }
+                                            {pageNumber < numPages &&
+                                                <i className="fa fa-arrow-circle-right fa-3x next-page" onClick={this.nextPage} aria-hidden="true"></i>
+                                            }
+                                            <Page pageNumber={pageNumber} />
+                                        </Document>
                                     </div>
                                     : ''}
                                 </div>
